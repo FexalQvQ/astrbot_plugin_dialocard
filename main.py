@@ -8,6 +8,7 @@ import hashlib
 import colorsys
 import zipfile
 import sys
+import time
 import threading
 import urllib.request
 from pathlib import Path
@@ -104,7 +105,6 @@ BUILTIN_EMOTIONS = {
 
 # 角色资产：asset/characters/{角色}/{情绪}.webp + meta.json
 # （离线管线 tools/build_cards.py 从 PSD 预渲染；全角色包通过 asset_url 首次自动下载）
-CHARACTER_DIR = "characters"
 # 上架 zip ≤16MB 限制：全量角色包与完整字体托管在 GitHub Releases，首次启动自动下载
 DEFAULT_ASSET_URL = ("https://github.com/FexalQvQ/astrbot_plugin_dialocard"
                      "/releases/download/v2.0.0/dialocard-characters-full.zip")
@@ -190,10 +190,14 @@ class DialoCardPlugin(Star):
         self.plugin_dir = Path(__file__).parent
         self.asset_dir = self.plugin_dir / "asset"
         self.pic_dir = self.asset_dir / "pictures"
-        self.font_dir = self.asset_dir / "font"
-        self.char_dir = self.asset_dir / CHARACTER_DIR
-        self.temp_dir = self.plugin_dir / "temp"
-        self.temp_dir.mkdir(exist_ok=True)
+        # 用户数据/下载资产全部落 data/plugin_data/<name>（更新/重装不覆盖）；
+        # 出厂资产（背景/子集字体/内置诺亚）只读留在插件包内，读取时回退
+        self.data_dir = atlas_render.DATA_DIR
+        self.char_dirs = atlas_render.CHAR_DIRS  # [plugin_data/characters, 出厂]
+        self.font_dirs = [self.data_dir / "fonts", self.asset_dir / "font"]
+        self.temp_dir = self.data_dir / "temp"  # 渲染产物/下载临时
+        self.data_dir.mkdir(parents=True, exist_ok=True)
+        self.temp_dir.mkdir(parents=True, exist_ok=True)
         self.config = config or {}
         # 字体优先完整版（GB2312 外的口语字如「欸」只在完整版里），无完整版用子集兜底
         self.font_path = self._pick_font_path()
@@ -215,31 +219,59 @@ class DialoCardPlugin(Star):
                     f"atlas_render={getattr(atlas_render, 'MODULE_REV', None) or '缺依赖回退预烘焙webp'}")
 
     def _pick_font_path(self) -> Path:
-        """写死字体优先级：包内完整版全集（含 GB2312 外口语字）优先，子集兜底。"""
-        full = self.font_dir / "SourceHanSerifCN-SemiBold-7.ttf"
-        subset = self.font_dir / "SourceHanSerifCN-SemiBold-subset.ttf"
-        return full if full.exists() else subset
+        """写死字体优先级：完整版全集（含 GB2312 外口语字）优先、子集兜底。
+        完整版下载落 plugin_data/fonts，出厂子集在插件包内。"""
+        for name in ("SourceHanSerifCN-SemiBold-7.ttf",
+                     "SourceHanSerifCN-SemiBold-subset.ttf"):
+            for d in self.font_dirs:
+                p = d / name
+                if p.exists():
+                    return p
+        return self.font_dirs[-1] / "SourceHanSerifCN-SemiBold-subset.ttf"
 
     def _font_url(self) -> str:
         return str(self.config.get("font_url") or DEFAULT_FONT_URL or "").strip()
 
     def _ensure_font_assets(self):
-        """上架 zip 只带子集（16MB 限制）；完整版不存在时后台下载全集并热切换
-        渲染字体（同角色包下载机制）。本地已有完整版则零下载。"""
-        full = self.font_dir / "SourceHanSerifCN-SemiBold-7.ttf"
+        """上架 zip 只带子集（16MB 限制）；完整版缺失时后台下载全集并热切换
+        渲染字体（同角色包下载机制）。任一搜索路径已有完整版则零下载。"""
+        full = "SourceHanSerifCN-SemiBold-7.ttf"
+        have = any((d / full).exists() for d in self.font_dirs)
         url = self._font_url()
-        if full.exists() or not url:
+        if have or not url:
             return
         threading.Thread(target=self._download_font, args=(url,), daemon=True).start()
+
+    def _fetch_to(self, url: str, dest: Path, label: str):
+        """流式下载到 dest：分块写盘 + 进度日志，失败抛出（含原因）。
+        dest 用临时名落盘（带时间戳），避免热重载后新旧下载线程互抢同一文件。"""
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        tmp = dest.with_name(f"{dest.name}.{time.time():.0f}.part")
+        last = 0.0
+        try:
+            with urllib.request.urlopen(url, timeout=60) as resp, open(tmp, "wb") as f:
+                total = int(resp.headers.get("Content-Length") or 0)
+                while True:
+                    chunk = resp.read(1 << 20)
+                    if not chunk:
+                        break
+                    f.write(chunk)
+                    done = tmp.stat().st_size / 1048576
+                    if done - last >= 8:
+                        last = done
+                        logger.info(f"[DialoCard] {label}下载中: {done:.0f}MB"
+                                    + (f"/{total / 1048576:.0f}MB" if total else ""))
+            tmp.replace(dest)
+        finally:
+            tmp.unlink(missing_ok=True)
 
     def _download_font(self, url: str):
         try:
             logger.info(f"[DialoCard] 开始下载完整字体包: {url}")
             tmp = self.temp_dir / "font_full.bin"
-            with urllib.request.urlopen(url, timeout=120) as resp, open(tmp, "wb") as f:
-                f.write(resp.read())
-            full = self.font_dir / "SourceHanSerifCN-SemiBold-7.ttf"
-            self.font_dir.mkdir(parents=True, exist_ok=True)
+            self._fetch_to(url, tmp, "字体")
+            full = self.font_dirs[0] / "SourceHanSerifCN-SemiBold-7.ttf"
+            full.parent.mkdir(parents=True, exist_ok=True)
             try:
                 with zipfile.ZipFile(tmp) as zf:  # zip 包：取体积最大的 ttf/otf 条目
                     cand = max((i for i in zf.infolist()
@@ -267,12 +299,23 @@ class DialoCardPlugin(Star):
 
     # ========== 角色资产下载 ==========
     def _ensure_character_assets(self):
-        """首次使用自动下载全量角色包（后台线程，不阻塞启动；
-        失败静默——已内置/已下载的角色照常工作，最差回退纯文字/旧版整卡图）。"""
-        char_dir = self.char_dir
+        """首次使用自动下载全量角色包到 plugin_data/characters（后台线程，不阻塞启动；
+        失败静默——已内置/已下载的角色照常工作，最差回退纯文字/旧版整卡图）。
+        manifest 存在但清单角色缺失（插件重装清空后）也会重新下载补齐。"""
+        char_dir = self.char_dirs[0]
         char_dir.mkdir(parents=True, exist_ok=True)
-        if (char_dir / "manifest.json").exists():
-            return
+        manifest = char_dir / "manifest.json"
+        if manifest.exists():
+            try:
+                listed = json.loads(
+                    manifest.read_text(encoding="utf-8")).get("characters", [])
+                missing = [c for c in listed if atlas_render.find_char_dir(c) is None]
+                if not missing:
+                    return
+                logger.info(f"[DialoCard] 角色缺失({', '.join(missing[:3])}"
+                            f"{'...' if len(missing) > 3 else ''})，重新下载资产包")
+            except Exception:
+                pass
         url = self._asset_url()
         if not url:
             return
@@ -282,32 +325,35 @@ class DialoCardPlugin(Star):
         try:
             logger.info(f"[DialoCard] 开始下载角色资产包: {url}")
             tmp_zip = self.temp_dir / "character_assets.zip"
-            with urllib.request.urlopen(url, timeout=60) as resp, open(tmp_zip, "wb") as f:
-                f.write(resp.read())
-            self.char_dir.mkdir(parents=True, exist_ok=True)
+            self._fetch_to(url, tmp_zip, "角色包")
+            char_dir = self.char_dirs[0]
+            char_dir.mkdir(parents=True, exist_ok=True)
             with zipfile.ZipFile(tmp_zip) as zf:
                 for info in zf.infolist():
                     if info.is_dir():
                         continue
                     # 防 zip-slip：只放行落在 char_dir 内的条目
-                    target = (self.char_dir / info.filename).resolve()
-                    if not str(target).startswith(str(self.char_dir.resolve())):
+                    target = (char_dir / info.filename).resolve()
+                    if not str(target).startswith(str(char_dir.resolve())):
                         continue
                     target.parent.mkdir(parents=True, exist_ok=True)
                     with zf.open(info) as src, open(target, "wb") as dst:
                         dst.write(src.read())
             tmp_zip.unlink(missing_ok=True)
             self._char_meta.clear()
+            atlas_render.clear_cache()
             logger.info(f"[DialoCard] 角色资产包下载完成")
         except Exception as e:
-            logger.warning(f"[DialoCard] 角色资产下载失败（可用旧版图/纯文字兜底）: {e}")
+            logger.warning(f"[DialoCard] 角色资产下载失败（可用旧版图/纯文字兜底）: {e}",
+                           exc_info=True)
 
     # ========== 角色层加载 ==========
     def _load_char_meta(self, char: str) -> Optional[Dict[str, Any]]:
         if char in self._char_meta:
             return self._char_meta[char]
-        meta_path = self.char_dir / char / "meta.json"
-        if not meta_path.exists():
+        cdir = atlas_render.find_char_dir(char)
+        meta_path = cdir / "meta.json" if cdir else None
+        if meta_path is None or not meta_path.exists():
             return None
         try:
             meta = json.loads(meta_path.read_text(encoding="utf-8"))
@@ -319,26 +365,28 @@ class DialoCardPlugin(Star):
 
     def _load_emotions(self, char: str) -> Dict[str, Any]:
         """emotions.json 热读（mtime 缓存）：WebUI 改完保存即生效。
-        文件缺失/损坏时回退 BUILTIN_EMOTIONS，配置被误重置渲染也不走样。"""
-        path = self.char_dir / char / "emotions.json"
-        try:
-            mtime = path.stat().st_mtime
-        except OSError:
-            return BUILTIN_EMOTIONS.get(char, {})
-        cached = self._emotions_cache.get(char)
-        if cached and cached[0] == mtime:
-            return cached[1]
-        try:
-            data = json.loads(path.read_text(encoding="utf-8"))
-        except Exception as e:
-            logger.error(f"[DialoCard] emotions.json 解析失败({char})，回退内置组合: {e}")
-            return BUILTIN_EMOTIONS.get(char, {})
-        # webui 落盘带 {"emotions": {...}} 包裹层，渲染侧统一解包（兼容旧平铺格式）；
-        # 不解包会让 on/off 全部落空，实际渲染按 PSD 默认可见性出图（喷漆粉色残留根因）
-        if isinstance(data, dict) and isinstance(data.get("emotions"), dict):
-            data = data["emotions"]
-        self._emotions_cache[char] = (mtime, data)
-        return data
+        读取链：plugin_data（用户保存）→ 插件包出厂组合 → BUILTIN_EMOTIONS 兜底。"""
+        for d in self.char_dirs:
+            path = d / char / "emotions.json"
+            try:
+                mtime = path.stat().st_mtime
+            except OSError:
+                continue  # 该级无文件，看下一级
+            cached = self._emotions_cache.get(char)
+            if cached and cached[:2] == (str(path), mtime):
+                return cached[2]
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+            except Exception as e:
+                logger.error(f"[DialoCard] emotions.json 解析失败({path})，回退内置组合: {e}")
+                break
+            # webui 落盘带 {"emotions": {...}} 包裹层，渲染侧统一解包（兼容旧平铺格式）；
+            # 不解包会让 on/off 全部落空，实际渲染按 PSD 默认可见性出图（喷漆粉色残留根因）
+            if isinstance(data, dict) and isinstance(data.get("emotions"), dict):
+                data = data["emotions"]
+            self._emotions_cache[char] = (str(path), mtime, data)
+            return data
+        return BUILTIN_EMOTIONS.get(char, {})
 
     def _load_character_layer(self, char: str, emoji: str, layout: str = "left"):
         """返回 (RGBA角色层 或 None, (x, y))。atlas 管线优先，回退预烘焙 webp。
@@ -362,7 +410,7 @@ class DialoCardPlugin(Star):
         meta = self._load_char_meta(char)
         if meta is None:
             return None, (0, 0)
-        cdir = self.char_dir / char
+        cdir = atlas_render.find_char_dir(char)
         for name in (emoji, "default"):
             p = cdir / f"{name}.webp"
             if p.exists():
@@ -417,11 +465,12 @@ class DialoCardPlugin(Star):
     def _check_asset_exists(self, emoji: str) -> bool:
         """atlas 管线 / 预烘焙角色层 / 旧版整卡图任一可用即可。"""
         char = self._current_character()
-        cdir = self.char_dir / char
-        if (cdir / "atlas.json").exists():
-            return True
-        if (cdir / f"{emoji}.webp").exists() or (cdir / "default.webp").exists():
-            return (cdir / "meta.json").exists()
+        cdir = atlas_render.find_char_dir(char)
+        if cdir is not None:
+            if (cdir / "atlas.json").exists():
+                return True
+            if (cdir / f"{emoji}.webp").exists() or (cdir / "default.webp").exists():
+                return (cdir / "meta.json").exists()
         return self._check_bg_exists(emoji)
 
     # ========== on_llm_request ==========

@@ -22,7 +22,46 @@ from pathlib import Path
 from PIL import Image, ImageChops
 
 PLUGIN_DIR = Path(__file__).resolve().parent
-ASSET_DIR = PLUGIN_DIR / "asset" / "characters"
+ASSET_DIR = PLUGIN_DIR / "asset" / "characters"  # 出厂内置（随包分发，只读）
+
+
+def _resolve_data_dir() -> Path:
+    """用户数据目录 data/plugin_data/astrbot_plugin_dialocard——插件更新/重装不覆盖。"""
+    try:
+        from astrbot.api import StarTools
+        return Path(StarTools.get_data_dir("astrbot_plugin_dialocard"))
+    except Exception:
+        return PLUGIN_DIR.parents[1] / "plugin_data" / "astrbot_plugin_dialocard"
+
+
+DATA_DIR = _resolve_data_dir()
+# 角色目录搜索序：下载/用户数据优先，出厂内置回退（写入只进第一项）
+CHAR_DIRS = [DATA_DIR / "characters", ASSET_DIR]
+
+
+def find_char_dir(char: str):
+    """角色目录解析：plugin_data 优先，出厂回退；无此角色返回 None。"""
+    for d in CHAR_DIRS:
+        if (d / char).is_dir():
+            return d / char
+    return None
+
+
+def list_characters() -> list:
+    out: list = []
+    for d in CHAR_DIRS:
+        if not d.is_dir():
+            continue
+        for c in sorted(d.iterdir()):
+            if c.is_dir() and (c / "atlas.json").exists() and c.name not in out:
+                out.append(c.name)
+    return out
+
+
+def clear_cache():
+    """下载/解压角色后清空实例缓存，让新角色立即可见。"""
+    with _LOCK:
+        _CACHE.clear()
 
 CANVAS_W, CANVAS_H = 1920, 1200
 MODULE_REV = "20261016-clip-layout"  # 热重载新鲜度标记（main.py 初始化日志打印）
@@ -30,22 +69,26 @@ UNIFORM_ANGLE = 3
 UNIFORM_BBOX_H = 1200
 UNIFORM_ANCHOR_X = 480
 
-# 全局构图：角度/缩放/平移，对全体角色生效；asset/transform.json 持久化微调。
+# 全局构图：角度/缩放/平移，对全体角色生效；transform.json 持久化到 plugin_data
+# （更新/重装不丢），出厂构图（随包 asset/transform.json）只读回退。
 # 默认值 = WebUI 调定的最终构图（替换原 scale 1.0 / dy 0 的原作偏移参数）：
 # 放大 1.34x、整体下移 265px；transform.json 缺失/损坏时回落到此默认。
-TRANSFORM_PATH = PLUGIN_DIR / "asset" / "transform.json"
+TRANSFORM_PATH = DATA_DIR / "transform.json"
+TRANSFORM_FALLBACK = ASSET_DIR.parent / "transform.json"
 _TRANSFORM = {"angle": float(UNIFORM_ANGLE), "scale": 1.34, "dx": 0.0, "dy": 265.0}
 
 
 def _load_transform():
-    try:
-        data = json.loads(TRANSFORM_PATH.read_text(encoding="utf-8"))
+    for path in (TRANSFORM_PATH, TRANSFORM_FALLBACK):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue  # 无文件/坏文件时试下一级，最后用默认构图
         for k in _TRANSFORM:
             v = data.get(k)
             if isinstance(v, (int, float)):
                 _TRANSFORM[k] = float(v)
-    except Exception:
-        pass  # 无文件/坏文件时用默认构图
+        return
 
 
 _load_transform()
@@ -75,7 +118,9 @@ def _group_key(name: str):
 
 class AtlasCharacter:
     def __init__(self, char: str):
-        d = ASSET_DIR / char
+        d = find_char_dir(char)
+        if d is None:
+            raise FileNotFoundError(f"角色目录不存在: {char}")
         self.char = char
         self.manifest = json.loads((d / "atlas.json").read_text(encoding="utf-8"))
         self.pages = [Image.open(d / p).convert("RGBA") for p in self.manifest["pages"]]
@@ -314,7 +359,8 @@ def get_character(char: str) -> AtlasCharacter:
 
 
 def has_atlas(char: str) -> bool:
-    return (ASSET_DIR / char / "atlas.json").exists()
+    d = find_char_dir(char)
+    return d is not None and (d / "atlas.json").exists()
 
 
 def get_transform() -> dict:
@@ -324,7 +370,7 @@ def get_transform() -> dict:
 
 def set_transform(angle=None, scale=None, dx=None, dy=None) -> dict:
     """更新全局构图（None 表示保持原值），并失效全部角色的构图缓存。
-    落盘由调用方负责（webui_api 写 asset/transform.json）。"""
+    落盘由调用方负责（webui_api 写 plugin_data/transform.json）。"""
     for k, v in (("angle", angle), ("scale", scale), ("dx", dx), ("dy", dy)):
         if v is not None:
             _TRANSFORM[k] = float(v)

@@ -30,9 +30,11 @@ from astrbot.api import logger
 from astrbot.api.web import request
 
 PLUGIN_DIR = Path(__file__).resolve().parent
-CHAR_DIR = PLUGIN_DIR / "asset" / "characters"
-PALETTE_PATH = PLUGIN_DIR / "asset" / "palette.json"
-TRANSFORM_PATH = PLUGIN_DIR / "asset" / "transform.json"
+# 用户数据全部落 plugin_data（更新/重装不覆盖）；出厂资产只读回退
+CHAR_DIRS = atlas_render.CHAR_DIRS           # [plugin_data/characters, 出厂]
+CHAR_SAVE_DIR = atlas_render.DATA_DIR / "characters"   # 保存/下载目标
+PALETTE_PATH = PLUGIN_DIR / "asset" / "palette.json"   # 出厂色卡，只读
+TRANSFORM_PATH = atlas_render.TRANSFORM_PATH           # plugin_data/transform.json
 DEFAULT_PALETTE = [{"name": "默认粉", "hex": "#FB92AE"}]
 
 
@@ -64,23 +66,23 @@ def _guard(fn):
 
 
 def _list_characters() -> list:
-    if not CHAR_DIR.exists():
-        return []
-    return sorted(d.name for d in CHAR_DIR.iterdir()
-                  if d.is_dir() and (d / "atlas.json").exists())
+    return atlas_render.list_characters()
 
 
 def _read_emotions(char: str, builtin: dict = None) -> dict:
-    emo_path = CHAR_DIR / char / "emotions.json"
-    if emo_path.exists():
+    """读取链：plugin_data（用户保存）→ 出厂组合 → 代码内置兜底。"""
+    for d in CHAR_DIRS:
+        emo_path = d / char / "emotions.json"
+        if not emo_path.exists():
+            continue
         try:
             data = json.loads(emo_path.read_text(encoding="utf-8")).get("emotions", {})
         except Exception:
             data = {}
         if data:
             return data
-    # 文件缺失/被重置/损坏：回退代码内置组合（与渲染侧同款兜底），回显真实渲染状态；
-    # 此时在 WebUI 点保存即把内置组合固化回 emotions.json，一键修复
+    # 全部缺失/被重置：回退代码内置组合（与渲染侧同款兜底），回显真实渲染状态；
+    # 此时在 WebUI 点保存即把内置组合固化回 plugin_data，一键修复
     return dict(builtin or {}).get(char, {})
 
 
@@ -88,20 +90,22 @@ def _load_state(char: str, builtin: dict = None) -> dict:
     char = str(char or "").strip()
     if char not in _list_characters():
         raise ValueError(f"未知角色 {char}")
-    atlas = json.loads((CHAR_DIR / char / "atlas.json").read_text(encoding="utf-8"))
+    cdir = atlas_render.find_char_dir(char)
+    atlas = json.loads((cdir / "atlas.json").read_text(encoding="utf-8"))
     return {"layers": atlas.get("layers", []),
             "emotions": _read_emotions(char, builtin)}
 
 
 def _save_emotions(char: str, emotions: dict) -> dict:
-    """清洗后落盘 asset/characters/{char}/emotions.json（渲染侧 mtime 热读）。
+    """清洗后落盘 plugin_data/characters/{char}/emotions.json（渲染侧 mtime 热读）。
     图层名只放行 atlas 里真实存在的，防止 WebUI 之外的垃圾数据写坏渲染。"""
     char = str(char or "").strip()
     if char not in _list_characters():
         raise ValueError(f"未知角色 {char}")
     if not isinstance(emotions, dict):
         raise ValueError("emotions 必须是对象")
-    atlas = json.loads((CHAR_DIR / char / "atlas.json").read_text(encoding="utf-8"))
+    cdir = atlas_render.find_char_dir(char)
+    atlas = json.loads((cdir / "atlas.json").read_text(encoding="utf-8"))
     valid = {str(l.get("name", "")) for l in atlas.get("layers", [])}
     clean = {}
     for name, cfg in emotions.items():
@@ -116,7 +120,10 @@ def _save_emotions(char: str, emotions: dict) -> dict:
 
         clean[name] = {"on": _names("on"), "off": _names("off"),
                        "overlays": _names("overlays")}
-    path = CHAR_DIR / char / "emotions.json"
+    # 写入只进 plugin_data（出厂组合在插件包内，只读不可覆盖）
+    out_dir = CHAR_SAVE_DIR / char
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / "emotions.json"
     if path.exists():
         # 保存是前端内存状态的全量覆盖，先留档上一版（.bak），误保存/覆盖可找回
         path.replace(path.parent / (path.name + ".bak"))
@@ -178,6 +185,7 @@ def _apply_transform(body: dict, save: bool) -> dict:
         clean[k] = round(v, 2)
     t = atlas_render.set_transform(**clean)
     if save:
+        TRANSFORM_PATH.parent.mkdir(parents=True, exist_ok=True)
         TRANSFORM_PATH.write_text(
             json.dumps(t, ensure_ascii=False, indent=1), encoding="utf-8")
     return t
