@@ -1,74 +1,44 @@
-# DialoCard 词卡插件
+<p align="center"><img src="logo.png" width="256" alt="审判词卡"></p>
 
-将 AstrBot 的 LLM 文本回复以 **20% 概率**渲染为精美词卡图片。
+# DialoCard 审判词卡
+
+基于《魔法少女的魔女裁判》审判过程 UI 二改的 AstrBot 插件。将 LLM 回复渲染为精美词卡图片，关键词粉色高亮。
 
 ## 特性
 
-- **多角色差分立绘**: 角色立绘来自 PSD 差分图层（眼神/嘴型/脸颊/手臂），离线管线按情绪合成
-- **分层渲染**: 背景 + 透明角色层（WebP）运行时合成，切换角色零成本
-- **心情驱动**: 10 种心情（wronged、surprise、smile、paint、flushed、embarrass、cry、confused、angry、afraid）+ default
-- **Keyword 高亮**: LLM 自动选择关键词进行粉色高亮，字号放大 1.2 倍
-- **倾斜排版**: 文字整体倾斜 3 度 + 黑色描边
-- **角色全量自动下载**: 首次启动按 `asset_url` 配置自动下载全部角色包，之后随时在 WebUI 切换
-- **优雅降级**: 角色包缺失 → 旧版整卡图 → 纯文字，逐级兜底
+- **多角色差分立绘**：角色来自 PSD 差分图层（眼神 / 嘴型 / 脸颊 / 手臂 / 特效），atlas 图集运行时实时合成，切换角色零成本
+- **情绪差分**：default / smile / angry / cry / afraid / surprise / confused / flushed / embarrass / wronged / paint，由 LLM 按语境自选
+- **三版式随机构图**：左文 / 右文 / 无立绘，背景与文字同角度倾斜
+- **Keyword 高亮**：LLM 自动选择关键词粉色高亮，字号放大 1.2 倍
+- **情绪组合内置兜底**：emotions.json 被误删 / 重置时渲染自动回退代码内置组合，永不走样
+- **WebUI 控制台**：仪表盘 → 插件 → 词卡 → Pages，可视化编辑情绪差分图层组合、全局构图，试渲染走真实发卡管线
+- **资产自动下载**：首次启动自动下载全量角色包与完整字体（GitHub Releases），内置诺亚开箱即用
+- **优雅降级**：atlas 图集 → 预烘焙角色层 → 旧版整卡图 → 纯文字，逐级兜底
 
-## 目录结构
+## 安装
 
-```
-astrbot_plugin_dialocard/
-├── main.py                  # 插件主代码
-├── metadata.yaml
-├── _conf_schema.json        # WebUI 配置（character / asset_url）
-├── asset/
-│   ├── background/          # 背景图（background.webp）
-│   ├── characters/          # 角色层（内置 Noah，其余自动下载）
-│   │   └── Noah/
-│   │       ├── default.webp ... afraid.webp   # 透明角色层（已含缩放/旋转/定位）
-│   │       └── meta.json                      # 在 1920×1200 卡上的粘贴坐标
-│   └── font/                # 子集化字体（GB2312 全汉字 + ASCII，2.6MB）
-├── temp/                    # 生成缓存（运行时）
-└── tools/                   # ★开发机专用，不影响插件运行
-    ├── build_cards.py       # PSD → 角色层 离线构建管线
-    ├── subset_font.py       # 字体子集化
-    └── characters/*.json    # 每角色的情绪→差分图层映射与构图参数
-```
+从 AstrBot 插件市场搜索「词卡」安装，或手动安装到 `data/plugins/`。安装后即可用（内置诺亚），首次启动自动下载其余角色与完整字体。
 
 ## 配置
 
 | 项 | 默认 | 说明 |
 |---|---|---|
 | `character` | `Noah` | 当前角色（asset/characters/ 下的目录名） |
-| `asset_url` | Releases 直链 | 全量角色包 zip（13 角色）；上架包仅内置 Noah，首次启动自动下载全部角色 |
+| `asset_url` | Releases 直链 | 全量角色包 zip（13 角色）；上架包仅内置诺亚，首次启动自动下载全部角色 |
 | `font_url` | Releases 直链 | 完整版思源宋体（含「欸」等 GB2312 外口语字）；上架包只带子集，首次启动自动下载。渲染字体写死完整版优先、子集兜底 |
 
-## 角色资产制作（开发机）
+## WebUI 控制台
 
-```bash
-py -m pip install psd-tools pillow fonttools
-# 1. 把 PSD 放入 asset/chracter/，在 tools/characters/{角色}.json 里
-#    标定情绪→差分图层映射与构图参数（crop/scale/anchor/angle）
-py tools/build_cards.py contact {角色} "ArmL"     # 某组差分联络表（挑手臂姿势用）
-py tools/build_cards.py sample {角色}             # 整卡样张 -> tools/samples/
-py tools/build_cards.py render {角色}             # 正式产出 -> asset/characters/{角色}/
-# 2. 字体子集化（首次）
-py tools/subset_font.py
-```
+仪表盘 → 插件 → 词卡 → Pages → console：
 
-差分合成输出为 1920×1200 卡坐标下的透明角色层（裁剪→缩放→旋转3°→定位），
-`meta.json` 记录 union bbox 左上角坐标，运行时直接 paste。
+- **情绪差分编辑**：勾选每个情绪开启 / 关闭 / 叠加的图层，实时预览，保存后热生效（自动留档 .bak）
+- **全局构图**：立绘角度、缩放、位移
+- **试渲染**：走真实发卡管线出图，所见即所得
 
-## 工作原理
+## 开发工具
 
-1. **on_llm_request**: 以 20% 概率标记会话，注入临时格式协议（正文|心情 + {关键词}）
-2. **on_llm_response**: 解析输出并渲染词卡（背景 + 角色层 + 倾斜文字），失败逐级回退
-3. **on_decorating_result**: 将消息链替换为纯图片
+`tools/` 下为 PSD 图集导出与字体子集化脚本（`tools/subset_font.py` 可重新生成 GB2312 子集，已补入「欸诶」等口语字）。
 
-## 依赖
+## 声明
 
-- Pillow（运行时）
-- psd-tools、fonttools（仅离线工具链）
-- AstrBot >= 4.16
-
-## License
-
-MIT
+本插件为《魔法少女的魔女裁判》审判过程 UI 同人二改，角色素材版权归原作者所有，仅作学习交流用途，与官方无关。
