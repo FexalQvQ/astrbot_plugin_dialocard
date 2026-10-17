@@ -1,0 +1,20 @@
+# 运行时产物 / 大文件不进仓库
+temp/
+__pycache__/
+*.pyc
+*.bak
+
+# PSD 源文件与旧版整卡图不进仓库（16MB 上架限制）
+asset/character/*.psd
+asset/pictures/
+asset/background/background.png
+
+# 完整字体（仓库只保留子集版）
+asset/font/SourceHanSerifCN-SemiBold-7.ttf
+
+# 离线管线产物与样张
+tools/samples/
+
+# 下载的全量角色包（按需分发，不进 git；仅内置 Noah）
+asset/characters/*
+!asset/characters/Noah/

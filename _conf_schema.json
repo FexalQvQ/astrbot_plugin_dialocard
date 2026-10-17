@@ -1,0 +1,20 @@
+{
+  "character": {
+    "type": "string",
+    "default": "Noah",
+    "description": "词卡角色（asset/characters/ 下的目录名，如 Anan / Nanoka）",
+    "hint": "首次启动若配置了 asset_url 会自动下载全部角色，下载完成后在此填写任意角色名即可切换"
+  },
+  "asset_url": {
+    "type": "string",
+    "default": "https://github.com/FexalQvQ/astrbot_plugin_dialocard/releases/download/v2.0.0/dialocard-characters-full.zip",
+    "description": "角色全量资产包下载直链（zip）",
+    "hint": "上架包仅内置 Noah；首次启动自动从此直链下载全部角色。留空则仅使用插件内置/手动放置的角色"
+  },
+  "font_url": {
+    "type": "string",
+    "default": "https://github.com/FexalQvQ/astrbot_plugin_dialocard/releases/download/v2.0.0/SourceHanSerifCN-SemiBold-7.ttf",
+    "description": "完整字体下载直链（zip 或 ttf）",
+    "hint": "上架包只带 GB2312 子集（16MB 限制）；首次启动自动下载完整版（含「欸」等口语字）。留空则用子集渲染"
+  }
+}

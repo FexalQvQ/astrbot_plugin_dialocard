@@ -1,0 +1,16 @@
+{
+  "psd": "Nanoka.psd",
+  "emotions": {
+    "default":    {"on": ["Eyes01_Normal_Open01", "Mouth01_Normal_Closed01", "ArmR01", "ArmL01"]},
+    "smile":      {"on": ["Eyes01_Neutral_Open01", "Mouth01_Smile_Open01", "ArmR01", "ArmL01"]},
+    "angry":      {"on": ["Eyes01_Rage_Open01", "Mouth01_Angry_Open01", "ArmR01", "ArmL01"]},
+    "cry":        {"on": ["Eyes01_Cry_Open01", "Mouth01_Cry_Closed01", "ArmR01", "ArmL01"]},
+    "afraid":     {"on": ["Eyes01_Fearful_Open01", "Mouth01_Fearful_Open01", "ArmR01", "ArmL01"]},
+    "surprise":   {"on": ["Eyes01_Surprised_Open01", "Mouth01_Surprised_Open01", "ArmR01", "ArmL01"]},
+    "confused":   {"on": ["Eyes01_Confused_Open01", "Mouth01_Pensive_Closed01", "ArmR01", "ArmL01"]},
+    "flushed":    {"on": ["Eyes01_Flushed_Open01", "Mouth01_Flushed_Closed01", "Cheeks01_Flushed", "ArmR01", "ArmL01"]},
+    "embarrass":  {"on": ["Eyes01_Pensive_Open01", "Mouth01_Flushed_Closed01", "Cheeks01_Flushed", "ArmR01", "ArmL01"]},
+    "wronged":    {"on": ["Eyes01_Tearful_Open01", "Mouth01_Cry_Closed01", "ArmR01", "ArmL01"]},
+    "paint":      {"on": ["Eyes01_Neutral_Open01", "Mouth01_Smile_Open01", "Arms04", "ArmR01", "ArmL01"]}
+  }
+}

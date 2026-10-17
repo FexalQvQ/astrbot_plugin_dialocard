@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DialoCard 差分定制</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <img class="logo" src="assets/logo.webp" alt="DialoCard">
+    <div class="brand">
+      <span class="t1">Dialocard Webui</span>
+      <span class="t2">@<b>Fexal</b></span>
+    </div>
+    <div class="spacer"></div>
+    <div class="pal" id="pal" title="主题色 · 来自 PSD 图层色卡"></div>
+  </div>
+  <div class="body">
+    <aside id="left">
+      <div class="char-row">
+        <select id="char"></select>
+        <button class="btn" id="addEmo">＋情绪</button>
+        <button class="btn" id="renameEmo">改名</button>
+      </div>
+      <div class="active-row">
+        <span id="activeBadge" class="badge" title="实际发卡消息渲染的角色（可在右侧设为当前所选）"></span>
+        <button class="btn sm" id="setActive" title="把实际渲染角色切换为当前所选">设为渲染</button>
+      </div>
+      <div class="emo-bar" id="emoBar"></div>
+      <div class="layers" id="layers"></div>
+      <div class="foot">
+        <button class="btn pri" id="save">保存</button>
+        <span id="msg"></span>
+      </div>
+    </aside>
+    <section id="right">
+      <div id="ctl">
+        <label><input type="checkbox" id="final"><span>最终构图</span></label>
+        <label style="cursor:pointer" id="reloadBtn">⟳ 刷新</label>
+      </div>
+      <div id="tfPanel" hidden>
+        <div class="tfrow"><span>角度</span><input type="range" id="tfAngle" min="-30" max="30" step="0.5"><b id="tfAngleV"></b></div>
+        <div class="tfrow"><span>缩放</span><input type="range" id="tfScale" min="0.5" max="1.6" step="0.02"><b id="tfScaleV"></b></div>
+        <div class="tfrow"><span>位置 X</span><input type="range" id="tfX" min="-800" max="800" step="5"><b id="tfXV"></b></div>
+        <div class="tfrow"><span>位置 Y</span><input type="range" id="tfY" min="-600" max="600" step="5"><b id="tfYV"></b></div>
+        <div class="tfbtns">
+          <button class="btn sm" id="tfReset">重置</button>
+          <button class="btn sm pri" id="tfSave">保存构图</button>
+        </div>
+      </div>
+      <img id="preview" alt="预览" hidden>
+      <div class="empty-hint" id="emptyHint">选择情绪后在此预览</div>
+    </section>
+  </div>
+</div>
+
+<!-- 输入弹层 -->
+<div class="ov" id="askOv">
+  <div class="dlg">
+    <h3 id="askTitle"></h3>
+    <input id="askInput">
+    <div class="row">
+      <button class="btn" id="askCancel">取消</button>
+      <button class="btn pri" id="askOk">确定</button>
+    </div>
+  </div>
+</div>
+<!-- 确认弹层 -->
+<div class="ov" id="cfmOv">
+  <div class="dlg">
+    <h3>确认操作</h3>
+    <div class="txt" id="cfmText"></div>
+    <div class="row">
+      <button class="btn" id="cfmCancel">取消</button>
+      <button class="btn" id="cfmOk" style="background:var(--danger);border-color:var(--danger);color:#fff">删除</button>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+"use strict";
+
+let bridge = null;
+const pageErrors = [];
+window.addEventListener("error", e => {
+  pageErrors.push((e.message || "error") + (e.lineno ? " @line " + e.lineno : ""));
+});
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s)
+  .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+  .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+
+// ── 状态 ──
+// iframe 处于 sandbox（无 allow-same-origin）：localStorage/document.cookie 会抛
+// SecurityError，预览图也带不上 cookie——前者走安全包装，后者走 bridge JSON 通道。
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch { /* 沙箱内不持久化 */ } },
+};
+const ACC_KEY = "dialocard_acc";
+const ACC_DEFAULT = "#FB92AE"; // PSD 色卡默认粉（图层14）
+let chars = [], cur = null, state = null, curEmo = null, palette = [];
+let activeChar = null; // 实际发卡渲染的角色（插件 config.character）
+let acc = store.get(ACC_KEY) || ACC_DEFAULT;
+
+// 与 atlas_render._group_key 保持一致（尾部编号剥离：ArmL01/ArmL04 同组互斥）
+const gv = n => {
+  const p = n.split("_");
+  if (p[0] === "Effect" && p.length > 1) return p.slice(0, 2).join("_");
+  const head = p[0].replace(/\d+$/, "");
+  if (["Pale", "Sweat", "Shadow", "Option"].includes(head)) return null;
+  return head;
+};
+
+// 预览经 bridge 取 data URL（沙箱 iframe 直连 API 带不上 cookie）；插件名等由父页面代理
+// ── API ──
+async function apiGet(ep, params) { return await bridge.apiGet("page/" + ep, params || {}); }
+async function apiPost(ep, body) { return await bridge.apiPost("page/" + ep, body || {}); }
+
+function toast(msg, type) {
+  const el = document.createElement("div");
+  el.className = "toast " + (type || "");
+  el.textContent = msg;
+  $("toasts").appendChild(el);
+  setTimeout(() => el.remove(), 2600);
+}
+function msg(text, cls) {
+  const el = $("msg");
+  el.textContent = text || "";
+  el.className = cls || "";
+}
+
+// ── 弹层 ──
+let askResolver = null;
+function askText(title, def) {
+  $("askTitle").textContent = title;
+  $("askInput").value = def || "";
+  $("askOv").classList.add("show");
+  setTimeout(() => { $("askInput").focus(); $("askInput").select(); }, 40);
+  return new Promise(res => { askResolver = res; });
+}
+let cfmResolver = null;
+function askConfirm(text) {
+  $("cfmText").textContent = text;
+  $("cfmOv").classList.add("show");
+  return new Promise(res => { cfmResolver = res; });
+}
+
+// ── 主题色 ──
+// sRGB 相对亮度：色卡偏亮（>0.4）→ 背景用本色配深字；偏深 → 暗背景派生配浅字
+function lum(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  const f = c => { c /= 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+  return 0.2126 * f((n >> 16) & 255) + 0.7152 * f((n >> 8) & 255) + 0.0722 * f(n & 255);
+}
+function applyAcc(hex) {
+  acc = hex;
+  store.set(ACC_KEY, hex);
+  const root = document.documentElement;
+  root.style.setProperty("--acc", hex);
+  root.classList.toggle("dark-bg", lum(hex) <= 0.4);
+  renderPal();
+}
+function renderPal() {
+  $("pal").innerHTML = palette.map(c =>
+    `<button class="sw ${c.hex.toLowerCase() === acc.toLowerCase() ? "act" : ""}"
+      style="--c:${esc(c.hex)}" title="${esc(c.name)} ${esc(c.hex)}"
+      onclick="setAcc('${esc(c.hex)}')"></button>`).join("");
+}
+
+// ── 渲染 ──
+function normEmotions() {
+  const out = {};
+  for (const [k, v] of Object.entries(state.emotions || {})) {
+    out[k] = { on: (v && v.on) || [], off: (v && v.off) || [],
+               overlays: (v && v.overlays) || [] };
+  }
+  state.emotions = out;
+}
+
+function renderEmo() {
+  const names = Object.keys(state.emotions);
+  $("emoBar").innerHTML = names.length
+    ? names.map((e, i) =>
+      `<span class="emo ${e === curEmo ? "act" : ""}" onclick="pickEmo(${i})">${esc(e)}<span class="x" onclick="delEmo(event,${i})">×</span></span>`).join("")
+    : '<span class="emo-empty">暂无情绪，点右上「＋情绪」创建</span>';
+}
+
+function rowHtml(l, idx, checked, kind) {
+  return `<label class="lbl">
+    <input type="checkbox" ${checked ? "checked" : ""} onchange="togLayer(${idx},this.checked,'${kind}')">
+    <span class="nm">${esc(l.name)}</span>
+    ${l.visible ? '<span class="dv">默认开</span>' : ""}
+  </label>`;
+}
+
+function renderLayers() {
+  const cfg = state.emotions[curEmo] || {};
+  const on = new Set(cfg.on || []), off = new Set(cfg.off || []);
+  const ov = new Set(cfg.overlays || []);
+  // 勾选态 = 生效可见（与渲染 composite 的组内去重一致）：
+  // 显式关最优先；同组有显式开时只显示名单最后一个；同组无显式开时按 PSD 默认
+  const lastOn = {};
+  for (const n of (cfg.on || [])) { const g = gv(n); if (g !== null) lastOn[g] = n; }
+  const eff = l => {
+    if (off.has(l.name)) return false;
+    if (on.has(l.name)) return lastOn[gv(l.name)] === l.name;
+    return !(gv(l.name) in lastOn) && l.visible;
+  };
+  const groups = {}, masks = [];
+  state.layers.forEach((l, i) => {
+    const g = gv(l.name);
+    if (g === null) masks.push([l, i]);
+    else (groups[g] = groups[g] || []).push([l, i]);
+  });
+  let html = Object.entries(groups).map(([g, ls]) =>
+    `<div class="grp"><h4>${esc(g)}</h4>` +
+    ls.map(([l, i]) => rowHtml(l, i, eff(l), "on")).join("") + "</div>").join("");
+  html += `<div class="grp"><h4>遮罩 · 修饰层 <span class="hint">独立差分层（脸红 / 汗滴…），默认关闭</span></h4>` +
+    (masks.length
+      ? masks.map(([l, i]) => rowHtml(l, i, ov.has(l.name), "ov")).join("")
+      : '<div class="none">该角色没有独立修饰层</div>') + "</div>";
+  $("layers").innerHTML = html;
+}
+
+// ── 预览 ──
+let previewTimer = null, previewSeq = 0;
+function preview() {
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(doPreview, 250);
+}
+async function doPreview() {
+  if (!state) return;
+  const seq = ++previewSeq;
+  const cfg = curEmo != null ? (state.emotions[curEmo] || {}) : {}; // 无情绪时预览基础立绘
+  const img = $("preview");
+  img.hidden = false;
+  $("emptyHint").hidden = true;
+  img.classList.add("loading");
+  try {
+    const d = await apiGet("preview", {
+      char: cur,
+      on: (cfg.on || []).join(","),
+      off: (cfg.off || []).join(","),
+      ov: (cfg.overlays || []).join(","),
+      final: $("final").checked ? 1 : 0,
+    });
+    if (seq !== previewSeq) return; // 已有更新的请求，丢弃旧结果
+    img.src = d.src;
+  } catch (e) {
+    if (seq === previewSeq) {
+      img.classList.remove("loading");
+      msg("预览失败: " + e.message, "err");
+    }
+  }
+}
+
+// ── 构图调整（全局：角度/缩放/平移，对全体角色生效并持久化）──
+const TF_DEFAULT = { angle: 3, scale: 1, dx: 0, dy: 0 };
+let tfTimer = null;
+function tfVals() {
+  return { angle: +$("tfAngle").value, scale: +$("tfScale").value,
+           dx: +$("tfX").value, dy: +$("tfY").value };
+}
+function tfLabels() {
+  $("tfAngleV").textContent = $("tfAngle").value + "°";
+  $("tfScaleV").textContent = (+$("tfScale").value).toFixed(2) + "×";
+  $("tfXV").textContent = $("tfX").value + "px";
+  $("tfYV").textContent = $("tfY").value + "px";
+}
+async function pushTransform(save) {
+  await apiPost("transform", Object.assign(tfVals(), { save: !!save }));
+  preview();
+}
+function tfChanged() { // 拖动中：防抖后应用+持久化+刷新最终构图预览
+  tfLabels();
+  clearTimeout(tfTimer);
+  tfTimer = setTimeout(
+    () => pushTransform(true).catch(e => msg("构图调整失败: " + e.message, "err")), 250);
+}
+
+// ── 数据流 ──
+async function loadChars() {
+  chars = await apiGet("chars");
+  $("char").innerHTML = chars.map(c => `<option>${esc(c)}</option>`).join("");
+  if (!chars.length) {
+    $("layers").innerHTML = '<div class="grp none">没有可用角色（需先导出图集 atlas.json）</div>';
+    return false;
+  }
+  return true;
+}
+
+async function loadState(c) {
+  cur = c;
+  $("char").value = c;
+  state = await apiGet("state", { char: c });
+  normEmotions();
+  curEmo = Object.keys(state.emotions)[0] || null;
+  msg("");
+  renderEmo();
+  renderLayers();
+  renderActive();
+  preview();
+}
+
+// ── 渲染角色 ──
+function renderActive() {
+  $("activeBadge").textContent = "渲染中：" + (activeChar || "？");
+  $("activeBadge").classList.toggle("is-cur", activeChar === cur);
+  $("setActive").disabled = activeChar == null || activeChar === cur;
+}
+window.setActive = async () => {
+  if (!cur) return;
+  try {
+    const r = await apiPost("active", { char: cur });
+    activeChar = r.char;
+    renderActive();
+    toast(`已切换渲染角色为 ${activeChar} · 下一条消息生效`, "ok");
+  } catch (e) {
+    toast("切换失败：" + e.message, "err");
+  }
+};
+
+// ── 交互 ──
+window.pickEmo = i => {
+  curEmo = Object.keys(state.emotions)[i];
+  renderEmo();
+  renderLayers();
+  preview();
+};
+window.delEmo = async (ev, i) => {
+  ev.stopPropagation();
+  const name = Object.keys(state.emotions)[i];
+  if (!await askConfirm(`删除情绪「${name}」？保存后生效。`)) return;
+  delete state.emotions[name];
+  if (curEmo === name) curEmo = Object.keys(state.emotions)[0] || null;
+  renderEmo();
+  renderLayers();
+  preview();
+};
+window.togLayer = (idx, checked, kind) => {
+  if (curEmo == null) return;
+  const name = state.layers[idx].name;
+  const cfg = state.emotions[curEmo] =
+    state.emotions[curEmo] || { on: [], off: [], overlays: [] };
+  if (kind === "ov") {
+    const set = new Set(cfg.overlays || []);
+    checked ? set.add(name) : set.delete(name);
+    cfg.overlays = [...set];
+  } else {
+    // 勾选 = 显式开（同组单选：移除同组其他显式开，后勾覆盖先勾）；
+    // 取消 = 显式关（默认开图层也能关掉）
+    const on = new Set(cfg.on || []), off = new Set(cfg.off || []);
+    if (checked) {
+      off.delete(name);
+      const g = gv(name);
+      if (g !== null) for (const n of on) if (n !== name && gv(n) === g) on.delete(n);
+      on.add(name);
+    } else { off.add(name); on.delete(name); }
+    cfg.on = [...on];
+    cfg.off = [...off];
+  }
+  renderLayers();
+  preview();
+};
+window.setAcc = hex => applyAcc(hex);
+
+async function addEmo() {
+  if (!state) return;
+  const name = (await askText("新增情绪名", "")) || "";
+  const nn = name.trim();
+  if (!nn) return;
+  if (state.emotions[nn] != null) { toast("情绪已存在", "err"); return; }
+  state.emotions[nn] = { on: [], off: [], overlays: [] };
+  curEmo = nn;
+  renderEmo();
+  renderLayers();
+  preview();
+}
+async function renameEmo() {
+  if (!state || curEmo == null) { toast("先选择一个情绪", "err"); return; }
+  const name = (await askText("重命名情绪", curEmo)) || "";
+  const nn = name.trim();
+  if (!nn || nn === curEmo) return;
+  if (state.emotions[nn] != null) { toast("情绪已存在", "err"); return; }
+  const next = {};
+  for (const [k, v] of Object.entries(state.emotions)) next[k === curEmo ? nn : k] = v;
+  state.emotions = next;
+  curEmo = nn;
+  renderEmo();
+}
+
+async function save() {
+  if (!state) return;
+  try {
+    const r = await apiPost("save", { char: cur, emotions: state.emotions });
+    state.emotions = r.emotions; // 采用服务端清洗结果
+    normEmotions();
+    renderEmo();
+    renderLayers();
+    msg("已保存 · 渲染侧即时生效", "ok");
+    toast("已保存", "ok");
+  } catch (e) {
+    msg("保存失败: " + e.message, "err");
+    toast("保存失败：" + e.message, "err");
+  }
+}
+
+// ── 启动 ──
+function showDiag(title, lines) {
+  document.body.innerHTML =
+    '<div class="diag"><h2>⚠ ' + esc(title) + "</h2><pre>" +
+    esc(lines.join("\n")) + "</pre></div>";
+}
+
+async function init() {
+  // bridge 由仪表盘注入在 body 结束前（注释里不要写字面的闭合标签，
+  // 否则 bridge 注入会命中这里而不是真正的 body 结尾），可能晚于本脚本；短暂等待
+  for (let i = 0; i < 50; i++) {
+    bridge = window.AstrBotPluginPage;
+    if (bridge && bridge.ready) break;
+    await new Promise(r => setTimeout(r, 100));
+  }
+  if (!bridge || !bridge.ready) {
+    showDiag("无法连接仪表盘 Bridge", [
+      "在 iframe 内: " + (window.self !== window.top),
+      "页面地址: " + location.href.slice(0, 200),
+      "JS 错误: " + (pageErrors.length ? pageErrors.slice(0, 3).join(" | ") : "无"),
+      "",
+      "正确入口：仪表盘 → 插件 → 词卡 → Pages → console",
+    ]);
+    return;
+  }
+  const ok = await Promise.race([
+    bridge.ready().then(() => true),
+    new Promise(r => setTimeout(() => r(false), 6000)),
+  ]);
+  if (!ok) {
+    showDiag("Bridge 已加载但仪表盘未响应", [
+      "页面地址: " + location.href.slice(0, 200),
+      "请从 仪表盘 → 插件 → 词卡 → Pages → console 打开",
+    ]);
+    return;
+  }
+  try {
+    palette = await apiGet("palette");
+  } catch { palette = []; }
+  try {
+    const t = await apiGet("transform");
+    $("tfAngle").value = t.angle; $("tfScale").value = t.scale;
+    $("tfX").value = t.dx; $("tfY").value = t.dy;
+  } catch { /* 读取失败时用滑块默认值 */ }
+  try {
+    activeChar = (await apiGet("active")).char || null;
+  } catch { activeChar = null; }
+  tfLabels();
+  applyAcc(acc);
+  if (await loadChars()) await loadState(chars[0]);
+}
+
+$("char").addEventListener("change", e => loadState(e.target.value));
+$("setActive").addEventListener("click", () => window.setActive());
+$("addEmo").addEventListener("click", addEmo);
+$("renameEmo").addEventListener("click", renameEmo);
+$("save").addEventListener("click", save);
+$("final").addEventListener("change", () => {
+  $("tfPanel").hidden = !$("final").checked;
+  preview();
+});
+for (const id of ["tfAngle", "tfScale", "tfX", "tfY"]) {
+  $(id).addEventListener("input", tfChanged);
+}
+$("tfSave").addEventListener("click", () =>
+  pushTransform(true)
+    .then(() => toast("构图已保存 · 对全体角色生效", "ok"))
+    .catch(e => toast("保存失败：" + e.message, "err")));
+$("tfReset").addEventListener("click", async () => {
+  $("tfAngle").value = TF_DEFAULT.angle;
+  $("tfScale").value = TF_DEFAULT.scale;
+  $("tfX").value = TF_DEFAULT.dx;
+  $("tfY").value = TF_DEFAULT.dy;
+  tfLabels();
+  try { await pushTransform(true); } catch (e) { msg("重置失败: " + e.message, "err"); }
+});
+$("reloadBtn").addEventListener("click", () => cur && loadState(cur));
+$("preview").addEventListener("load", () => $("preview").classList.remove("loading"));
+$("askOk").addEventListener("click", () => {
+  const v = $("askInput").value;
+  $("askOv").classList.remove("show");
+  if (askResolver) { askResolver(v); askResolver = null; }
+});
+$("askCancel").addEventListener("click", () => {
+  $("askOv").classList.remove("show");
+  if (askResolver) { askResolver(null); askResolver = null; }
+});
+$("askInput").addEventListener("keydown", e => { if (e.key === "Enter") $("askOk").click(); });
+$("cfmOk").addEventListener("click", () => {
+  $("cfmOv").classList.remove("show");
+  if (cfmResolver) { cfmResolver(true); cfmResolver = null; }
+});
+$("cfmCancel").addEventListener("click", () => {
+  $("cfmOv").classList.remove("show");
+  if (cfmResolver) { cfmResolver(false); cfmResolver = null; }
+});
+
+init().catch(e => toast("初始化失败：" + e.message, "err"));
+</script>
+</body>
+</html>

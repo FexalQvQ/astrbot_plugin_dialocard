@@ -1,0 +1,1604 @@
+{
+ "character": "Noah",
+ "canvas": [
+  2264,
+  1877
+ ],
+ "pages": [
+  "atlas_0.webp",
+  "atlas_1.webp"
+ ],
+ "units": [
+  {
+   "z": 0,
+   "names": [
+    "Body"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    177,
+    0,
+    1982,
+    1877
+   ],
+   "page": 0,
+   "pos": [
+    0,
+    0
+   ],
+   "size": [
+    1982,
+    1877
+   ],
+   "group_key": "Body"
+  },
+  {
+   "z": 1,
+   "names": [
+    "Cheeks_Flushed"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    923,
+    522,
+    1006,
+    1027
+   ],
+   "page": 0,
+   "pos": [
+    0,
+    1877
+   ],
+   "size": [
+    1006,
+    1027
+   ],
+   "group_key": "Cheeks"
+  },
+  {
+   "z": 2,
+   "names": [
+    "Cheeks_Normal"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    915,
+    557,
+    1014,
+    992
+   ],
+   "page": 0,
+   "pos": [
+    2125,
+    1877
+   ],
+   "size": [
+    1014,
+    992
+   ],
+   "group_key": "Cheeks"
+  },
+  {
+   "z": 3,
+   "names": [
+    "Mouth_Uncomfortable_Open"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1078,
+    677,
+    86,
+    43
+   ],
+   "page": 1,
+   "pos": [
+    2814,
+    1684
+   ],
+   "size": [
+    86,
+    43
+   ],
+   "group_key": "Mouth"
+  },
+  {
+   "z": 4,
+   "names": [
+    "Mouth_Confused_Open"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1073,
+    679,
+    97,
+    41
+   ],
+   "page": 1,
+   "pos": [
+    2934,
+    1684
+   ],
+   "size": [
+    97,
+    41
+   ],
+   "group_key": "Mouth"
+  },
+  {
+   "z": 5,
+   "names": [
+    "Mouth_Flushed_Open"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1067,
+    682,
+    109,
+    36
+   ],
+   "page": 1,
+   "pos": [
+    3064,
+    1684
+   ],
+   "size": [
+    109,
+    36
+   ],
+   "group_key": "Mouth"
+  },
+  {
+   "z": 6,
+   "names": [
+    "Mouth_Surprised_Open02"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1068,
+    673,
+    107,
+    61
+   ],
+   "page": 1,
+   "pos": [
+    2640,
+    1684
+   ],
+   "size": [
+    107,
+    61
+   ],
+   "group_key": "Mouth"
+  },
+  {
+   "z": 7,
+   "names": [
+    "Mouth_Surprised_Open01"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1084,
+    667,
+    75,
+    71
+   ],
+   "page": 1,
+   "pos": [
+    2565,
+    1684
+   ],
+   "size": [
+    75,
+    71
+   ],
+   "group_key": "Mouth"
+  },
+  {
+   "z": 8,
+   "names": [
+    "Mouth_Cry_Closed"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1104,
+    689,
+    34,
+    42
+   ],
+   "page": 1,
+   "pos": [
+    2900,
+    1684
+   ],
+   "size": [
+    34,
+    42
+   ],
+   "group_key": "Mouth"
+  },
+  {
+   "z": 9,
+   "names": [
+    "Mouth_Pensive_Open"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1095,
+    691,
+    53,
+    27
+   ],
+   "page": 1,
+   "pos": [
+    3188,
+    1684
+   ],
+   "size": [
+    53,
+    27
+   ],
+   "group_key": "Mouth"
+  },
+  {
+   "z": 10,
+   "names": [
+    "Mouth_Angry_Closed"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1101,
+    658,
+    33,
+    41
+   ],
+   "page": 1,
+   "pos": [
+    3031,
+    1684
+   ],
+   "size": [
+    33,
+    41
+   ],
+   "group_key": "Mouth"
+  },
+  {
+   "z": 11,
+   "names": [
+    "Mouth_Angry_Open"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1103,
+    690,
+    37,
+    20
+   ],
+   "page": 1,
+   "pos": [
+    3241,
+    1684
+   ],
+   "size": [
+    37,
+    20
+   ],
+   "group_key": "Mouth"
+  },
+  {
+   "z": 12,
+   "names": [
+    "Mouth_Smile_Closed"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1085,
+    689,
+    77,
+    16
+   ],
+   "page": 1,
+   "pos": [
+    3278,
+    1684
+   ],
+   "size": [
+    77,
+    16
+   ],
+   "group_key": "Mouth"
+  },
+  {
+   "z": 13,
+   "names": [
+    "Mouth_Smile_Open02"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1076,
+    667,
+    90,
+    76
+   ],
+   "page": 1,
+   "pos": [
+    2475,
+    1684
+   ],
+   "size": [
+    90,
+    76
+   ],
+   "group_key": "Mouth"
+  },
+  {
+   "z": 14,
+   "names": [
+    "Mouth_Smile_Open01"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1088,
+    680,
+    67,
+    44
+   ],
+   "page": 1,
+   "pos": [
+    2747,
+    1684
+   ],
+   "size": [
+    67,
+    44
+   ],
+   "group_key": "Mouth"
+  },
+  {
+   "z": 15,
+   "names": [
+    "Mouth_Normal_Closed"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1108,
+    693,
+    26,
+    10
+   ],
+   "page": 1,
+   "pos": [
+    3355,
+    1684
+   ],
+   "size": [
+    26,
+    10
+   ],
+   "group_key": "Mouth"
+  },
+  {
+   "z": 16,
+   "names": [
+    "Eyes_Uncomfortable_Open"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    906,
+    465,
+    430,
+    128
+   ],
+   "page": 1,
+   "pos": [
+    2045,
+    1684
+   ],
+   "size": [
+    430,
+    128
+   ],
+   "group_key": "Eyes"
+  },
+  {
+   "z": 17,
+   "names": [
+    "Eyes_Fearful_Open"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    895,
+    404,
+    436,
+    211
+   ],
+   "page": 1,
+   "pos": [
+    435,
+    1454
+   ],
+   "size": [
+    436,
+    211
+   ],
+   "group_key": "Eyes"
+  },
+  {
+   "z": 18,
+   "names": [
+    "Eyes_Surprised_Open02"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    900,
+    380,
+    435,
+    230
+   ],
+   "page": 1,
+   "pos": [
+    0,
+    1454
+   ],
+   "size": [
+    435,
+    230
+   ],
+   "group_key": "Eyes"
+  },
+  {
+   "z": 19,
+   "names": [
+    "Eyes_Surprised_Open01"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    900,
+    410,
+    435,
+    201
+   ],
+   "page": 1,
+   "pos": [
+    1761,
+    1454
+   ],
+   "size": [
+    435,
+    201
+   ],
+   "group_key": "Eyes"
+  },
+  {
+   "z": 20,
+   "names": [
+    "Eyes_Cry_Open"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    902,
+    459,
+    430,
+    147
+   ],
+   "page": 1,
+   "pos": [
+    773,
+    1684
+   ],
+   "size": [
+    430,
+    147
+   ],
+   "group_key": "Eyes"
+  },
+  {
+   "z": 21,
+   "names": [
+    "Eyes_Pensive_Open_1"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    887,
+    414,
+    443,
+    210
+   ],
+   "page": 1,
+   "pos": [
+    871,
+    1454
+   ],
+   "size": [
+    443,
+    210
+   ],
+   "group_key": "Eyes"
+  },
+  {
+   "z": 22,
+   "names": [
+    "Eyes_Pensive_Open"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    887,
+    475,
+    433,
+    136
+   ],
+   "page": 1,
+   "pos": [
+    1203,
+    1684
+   ],
+   "size": [
+    433,
+    136
+   ],
+   "group_key": "Eyes"
+  },
+  {
+   "z": 23,
+   "names": [
+    "Eyes_Angry_Open"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    888,
+    410,
+    447,
+    201
+   ],
+   "page": 1,
+   "pos": [
+    2196,
+    1454
+   ],
+   "size": [
+    447,
+    201
+   ],
+   "group_key": "Eyes"
+  },
+  {
+   "z": 24,
+   "names": [
+    "Eyes_Smile_Closed02"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    913,
+    428,
+    410,
+    173
+   ],
+   "page": 1,
+   "pos": [
+    363,
+    1684
+   ],
+   "size": [
+    410,
+    173
+   ],
+   "group_key": "Eyes"
+  },
+  {
+   "z": 25,
+   "names": [
+    "Eyes_Smile_Closed01"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    908,
+    463,
+    409,
+    132
+   ],
+   "page": 1,
+   "pos": [
+    1636,
+    1684
+   ],
+   "size": [
+    409,
+    132
+   ],
+   "group_key": "Eyes"
+  },
+  {
+   "z": 26,
+   "names": [
+    "Eyes_Smile_Open"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    888,
+    405,
+    447,
+    204
+   ],
+   "page": 1,
+   "pos": [
+    1314,
+    1454
+   ],
+   "size": [
+    447,
+    204
+   ],
+   "group_key": "Eyes"
+  },
+  {
+   "z": 27,
+   "names": [
+    "Eyes_Normal_Open02"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    887,
+    373,
+    443,
+    237
+   ],
+   "page": 1,
+   "pos": [
+    3388,
+    905
+   ],
+   "size": [
+    443,
+    237
+   ],
+   "group_key": "Eyes"
+  },
+  {
+   "z": 28,
+   "names": [
+    "Eyes_Normal_Open01"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    887,
+    426,
+    443,
+    184
+   ],
+   "page": 1,
+   "pos": [
+    2643,
+    1454
+   ],
+   "size": [
+    443,
+    184
+   ],
+   "group_key": "Eyes"
+  },
+  {
+   "z": 29,
+   "names": [
+    "ClippingMask_Eyes"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    887,
+    426,
+    443,
+    184
+   ],
+   "page": 1,
+   "pos": [
+    3086,
+    1454
+   ],
+   "size": [
+    443,
+    184
+   ],
+   "clip_host": "Eyes_Normal_Open01",
+   "group_key": null
+  },
+  {
+   "z": 30,
+   "names": [
+    "ClippingMask_Facial_02"
+   ],
+   "blend": "MULTIPLY",
+   "canvas": [
+    912,
+    426,
+    382,
+    184
+   ],
+   "page": 1,
+   "pos": [
+    3529,
+    1454
+   ],
+   "size": [
+    382,
+    184
+   ],
+   "clip_host": "Eyes_Normal_Open01",
+   "group_key": null
+  },
+  {
+   "z": 31,
+   "names": [
+    "ClippingMask_Facial_01"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    927,
+    426,
+    363,
+    184
+   ],
+   "page": 1,
+   "pos": [
+    0,
+    1684
+   ],
+   "size": [
+    363,
+    184
+   ],
+   "clip_host": "Eyes_Normal_Open01",
+   "group_key": null
+  },
+  {
+   "z": 32,
+   "names": [
+    "Sweat01"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1218,
+    671,
+    15,
+    35
+   ],
+   "page": 1,
+   "pos": [
+    3173,
+    1684
+   ],
+   "size": [
+    15,
+    35
+   ],
+   "group_key": "Sweat01"
+  },
+  {
+   "z": 33,
+   "names": [
+    "Pale01"
+   ],
+   "blend": "MULTIPLY",
+   "canvas": [
+    924,
+    394,
+    367,
+    375
+   ],
+   "page": 1,
+   "pos": [
+    1969,
+    905
+   ],
+   "size": [
+    367,
+    375
+   ],
+   "group_key": "Pale01"
+  },
+  {
+   "z": 34,
+   "names": [
+    "ArmR06"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    274,
+    885,
+    845,
+    992
+   ],
+   "page": 0,
+   "pos": [
+    3139,
+    1877
+   ],
+   "size": [
+    845,
+    992
+   ],
+   "group_key": "ArmR06"
+  },
+  {
+   "z": 35,
+   "names": [
+    "ArmR05"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    293,
+    885,
+    826,
+    992
+   ],
+   "page": 0,
+   "pos": [
+    0,
+    2904
+   ],
+   "size": [
+    826,
+    992
+   ],
+   "group_key": "ArmR05"
+  },
+  {
+   "z": 36,
+   "names": [
+    "ArmR04"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    606,
+    733,
+    614,
+    1070
+   ],
+   "page": 0,
+   "pos": [
+    1982,
+    0
+   ],
+   "size": [
+    614,
+    1070
+   ],
+   "group_key": "ArmR04"
+  },
+  {
+   "z": 37,
+   "names": [
+    "ArmR03"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    0,
+    884,
+    1119,
+    993
+   ],
+   "page": 0,
+   "pos": [
+    1006,
+    1877
+   ],
+   "size": [
+    1119,
+    993
+   ],
+   "group_key": "ArmR03"
+  },
+  {
+   "z": 38,
+   "names": [
+    "ArmR02"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    600,
+    884,
+    518,
+    815
+   ],
+   "page": 1,
+   "pos": [
+    1785,
+    0
+   ],
+   "size": [
+    518,
+    815
+   ],
+   "group_key": "ArmR02"
+  },
+  {
+   "z": 39,
+   "names": [
+    "ArmR01"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    255,
+    885,
+    864,
+    992
+   ],
+   "page": 0,
+   "pos": [
+    826,
+    2904
+   ],
+   "size": [
+    864,
+    992
+   ],
+   "group_key": "ArmR01"
+  },
+  {
+   "z": 40,
+   "names": [
+    "ArmL06"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1103,
+    899,
+    898,
+    978
+   ],
+   "page": 0,
+   "pos": [
+    1690,
+    2904
+   ],
+   "size": [
+    898,
+    978
+   ],
+   "group_key": "ArmL06"
+  },
+  {
+   "z": 41,
+   "names": [
+    "ArmL05"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1102,
+    474,
+    639,
+    1047
+   ],
+   "page": 0,
+   "pos": [
+    2596,
+    0
+   ],
+   "size": [
+    639,
+    1047
+   ],
+   "group_key": "ArmL05"
+  },
+  {
+   "z": 42,
+   "names": [
+    "ArmL04"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1102,
+    899,
+    565,
+    783
+   ],
+   "page": 1,
+   "pos": [
+    3060,
+    0
+   ],
+   "size": [
+    565,
+    783
+   ],
+   "group_key": "ArmL04"
+  },
+  {
+   "z": 43,
+   "names": [
+    "ArmL03"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1102,
+    900,
+    1161,
+    825
+   ],
+   "page": 1,
+   "pos": [
+    624,
+    0
+   ],
+   "size": [
+    1161,
+    825
+   ],
+   "group_key": "ArmL03"
+  },
+  {
+   "z": 44,
+   "names": [
+    "ArmL02"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1103,
+    900,
+    936,
+    977
+   ],
+   "page": 0,
+   "pos": [
+    2588,
+    2904
+   ],
+   "size": [
+    936,
+    977
+   ],
+   "group_key": "ArmL02"
+  },
+  {
+   "z": 45,
+   "names": [
+    "ArmL01"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1103,
+    900,
+    757,
+    796
+   ],
+   "page": 1,
+   "pos": [
+    2303,
+    0
+   ],
+   "size": [
+    757,
+    796
+   ],
+   "group_key": "ArmL01"
+  },
+  {
+   "z": 46,
+   "names": [
+    "Effect_Front_ArmR05"
+   ],
+   "blend": "SOFT_LIGHT",
+   "canvas": [
+    472,
+    997,
+    487,
+    488
+   ],
+   "page": 1,
+   "pos": [
+    1482,
+    905
+   ],
+   "size": [
+    487,
+    488
+   ],
+   "group_key": "Effect_Front"
+  },
+  {
+   "z": 47,
+   "names": [
+    "Effect_Front_ArmR04"
+   ],
+   "blend": "SOFT_LIGHT",
+   "canvas": [
+    851,
+    645,
+    476,
+    545
+   ],
+   "page": 1,
+   "pos": [
+    1006,
+    905
+   ],
+   "size": [
+    476,
+    545
+   ],
+   "group_key": "Effect_Front"
+  },
+  {
+   "z": 48,
+   "names": [
+    "Effect_Front_ArmR02"
+   ],
+   "blend": "SOFT_LIGHT",
+   "canvas": [
+    657,
+    1038,
+    503,
+    549
+   ],
+   "page": 1,
+   "pos": [
+    0,
+    905
+   ],
+   "size": [
+    503,
+    549
+   ],
+   "group_key": "Effect_Front"
+  },
+  {
+   "z": 49,
+   "names": [
+    "Effect_Front_ArmL05"
+   ],
+   "blend": "SOFT_LIGHT",
+   "canvas": [
+    1220,
+    330,
+    624,
+    905
+   ],
+   "page": 1,
+   "pos": [
+    0,
+    0
+   ],
+   "size": [
+    624,
+    905
+   ],
+   "group_key": "Effect_Front"
+  },
+  {
+   "z": 50,
+   "names": [
+    "Effect_Front_ArmL04"
+   ],
+   "blend": "SOFT_LIGHT",
+   "canvas": [
+    1053,
+    1023,
+    503,
+    549
+   ],
+   "page": 1,
+   "pos": [
+    503,
+    905
+   ],
+   "size": [
+    503,
+    549
+   ],
+   "group_key": "Effect_Front"
+  },
+  {
+   "z": 51,
+   "names": [
+    "Effect_Front_ArmL01"
+   ],
+   "blend": "NORMAL",
+   "canvas": [
+    1486,
+    1098,
+    367,
+    375
+   ],
+   "page": 1,
+   "pos": [
+    2336,
+    905
+   ],
+   "size": [
+    367,
+    375
+   ],
+   "group_key": "Effect_Front"
+  },
+  {
+   "z": 52,
+   "names": [
+    "ClippingMask_Effect_Root_04"
+   ],
+   "blend": "SOFT_LIGHT",
+   "canvas": [
+    1486,
+    1098,
+    97,
+    375
+   ],
+   "page": 1,
+   "pos": [
+    2703,
+    905
+   ],
+   "size": [
+    97,
+    375
+   ],
+   "clip_host": "Effect_Front_ArmL01",
+   "group_key": null
+  },
+  {
+   "z": 53,
+   "names": [
+    "ClippingMask_Effect_Root_03"
+   ],
+   "blend": "OVERLAY",
+   "canvas": [
+    1486,
+    1098,
+    157,
+    371
+   ],
+   "page": 1,
+   "pos": [
+    2800,
+    905
+   ],
+   "size": [
+    157,
+    371
+   ],
+   "clip_host": "Effect_Front_ArmL01",
+   "group_key": null
+  },
+  {
+   "z": 54,
+   "names": [
+    "ClippingMask_Effect_Root_02"
+   ],
+   "blend": "OVERLAY",
+   "canvas": [
+    1486,
+    1229,
+    111,
+    244
+   ],
+   "page": 1,
+   "pos": [
+    3277,
+    905
+   ],
+   "size": [
+    111,
+    244
+   ],
+   "clip_host": "Effect_Front_ArmL01",
+   "group_key": null
+  },
+  {
+   "z": 55,
+   "names": [
+    "ClippingMask_Effect_Root_01"
+   ],
+   "blend": "OVERLAY",
+   "canvas": [
+    1486,
+    1098,
+    320,
+    328
+   ],
+   "page": 1,
+   "pos": [
+    2957,
+    905
+   ],
+   "size": [
+    320,
+    328
+   ],
+   "clip_host": "Effect_Front_ArmL01",
+   "group_key": null
+  }
+ ],
+ "layers": [
+  {
+   "name": "Body",
+   "unit": 0,
+   "visible": true,
+   "group_key": "Body"
+  },
+  {
+   "name": "Cheeks_Flushed",
+   "unit": 1,
+   "visible": true,
+   "group_key": "Cheeks"
+  },
+  {
+   "name": "Cheeks_Normal",
+   "unit": 2,
+   "visible": true,
+   "group_key": "Cheeks"
+  },
+  {
+   "name": "Mouth_Uncomfortable_Open",
+   "unit": 3,
+   "visible": false,
+   "group_key": "Mouth"
+  },
+  {
+   "name": "Mouth_Confused_Open",
+   "unit": 4,
+   "visible": false,
+   "group_key": "Mouth"
+  },
+  {
+   "name": "Mouth_Flushed_Open",
+   "unit": 5,
+   "visible": false,
+   "group_key": "Mouth"
+  },
+  {
+   "name": "Mouth_Surprised_Open02",
+   "unit": 6,
+   "visible": false,
+   "group_key": "Mouth"
+  },
+  {
+   "name": "Mouth_Surprised_Open01",
+   "unit": 7,
+   "visible": false,
+   "group_key": "Mouth"
+  },
+  {
+   "name": "Mouth_Cry_Closed",
+   "unit": 8,
+   "visible": false,
+   "group_key": "Mouth"
+  },
+  {
+   "name": "Mouth_Pensive_Open",
+   "unit": 9,
+   "visible": false,
+   "group_key": "Mouth"
+  },
+  {
+   "name": "Mouth_Angry_Closed",
+   "unit": 10,
+   "visible": false,
+   "group_key": "Mouth"
+  },
+  {
+   "name": "Mouth_Angry_Open",
+   "unit": 11,
+   "visible": false,
+   "group_key": "Mouth"
+  },
+  {
+   "name": "Mouth_Smile_Closed",
+   "unit": 12,
+   "visible": true,
+   "group_key": "Mouth"
+  },
+  {
+   "name": "Mouth_Smile_Open02",
+   "unit": 13,
+   "visible": false,
+   "group_key": "Mouth"
+  },
+  {
+   "name": "Mouth_Smile_Open01",
+   "unit": 14,
+   "visible": false,
+   "group_key": "Mouth"
+  },
+  {
+   "name": "Mouth_Normal_Closed",
+   "unit": 15,
+   "visible": false,
+   "group_key": "Mouth"
+  },
+  {
+   "name": "Eyes_Uncomfortable_Open",
+   "unit": 16,
+   "visible": false,
+   "group_key": "Eyes"
+  },
+  {
+   "name": "Eyes_Fearful_Open",
+   "unit": 17,
+   "visible": false,
+   "group_key": "Eyes"
+  },
+  {
+   "name": "Eyes_Surprised_Open02",
+   "unit": 18,
+   "visible": false,
+   "group_key": "Eyes"
+  },
+  {
+   "name": "Eyes_Surprised_Open01",
+   "unit": 19,
+   "visible": false,
+   "group_key": "Eyes"
+  },
+  {
+   "name": "Eyes_Cry_Open",
+   "unit": 20,
+   "visible": false,
+   "group_key": "Eyes"
+  },
+  {
+   "name": "Eyes_Pensive_Open_1",
+   "unit": 21,
+   "visible": false,
+   "group_key": "Eyes"
+  },
+  {
+   "name": "Eyes_Pensive_Open",
+   "unit": 22,
+   "visible": false,
+   "group_key": "Eyes"
+  },
+  {
+   "name": "Eyes_Angry_Open",
+   "unit": 23,
+   "visible": false,
+   "group_key": "Eyes"
+  },
+  {
+   "name": "Eyes_Smile_Closed02",
+   "unit": 24,
+   "visible": false,
+   "group_key": "Eyes"
+  },
+  {
+   "name": "Eyes_Smile_Closed01",
+   "unit": 25,
+   "visible": true,
+   "group_key": "Eyes"
+  },
+  {
+   "name": "Eyes_Smile_Open",
+   "unit": 26,
+   "visible": false,
+   "group_key": "Eyes"
+  },
+  {
+   "name": "Eyes_Normal_Open02",
+   "unit": 27,
+   "visible": false,
+   "group_key": "Eyes"
+  },
+  {
+   "name": "Eyes_Normal_Open01",
+   "unit": 28,
+   "visible": false,
+   "group_key": "Eyes"
+  },
+  {
+   "name": "Sweat01",
+   "unit": 32,
+   "visible": false,
+   "group_key": "Sweat01"
+  },
+  {
+   "name": "Pale01",
+   "unit": 33,
+   "visible": false,
+   "group_key": "Pale01"
+  },
+  {
+   "name": "ArmR06",
+   "unit": 34,
+   "visible": false,
+   "group_key": "ArmR06"
+  },
+  {
+   "name": "ArmR05",
+   "unit": 35,
+   "visible": false,
+   "group_key": "ArmR05"
+  },
+  {
+   "name": "ArmR04",
+   "unit": 36,
+   "visible": false,
+   "group_key": "ArmR04"
+  },
+  {
+   "name": "ArmR03",
+   "unit": 37,
+   "visible": false,
+   "group_key": "ArmR03"
+  },
+  {
+   "name": "ArmR02",
+   "unit": 38,
+   "visible": false,
+   "group_key": "ArmR02"
+  },
+  {
+   "name": "ArmR01",
+   "unit": 39,
+   "visible": true,
+   "group_key": "ArmR01"
+  },
+  {
+   "name": "ArmL06",
+   "unit": 40,
+   "visible": false,
+   "group_key": "ArmL06"
+  },
+  {
+   "name": "ArmL05",
+   "unit": 41,
+   "visible": false,
+   "group_key": "ArmL05"
+  },
+  {
+   "name": "ArmL04",
+   "unit": 42,
+   "visible": false,
+   "group_key": "ArmL04"
+  },
+  {
+   "name": "ArmL03",
+   "unit": 43,
+   "visible": false,
+   "group_key": "ArmL03"
+  },
+  {
+   "name": "ArmL02",
+   "unit": 44,
+   "visible": false,
+   "group_key": "ArmL02"
+  },
+  {
+   "name": "ArmL01",
+   "unit": 45,
+   "visible": true,
+   "group_key": "ArmL01"
+  },
+  {
+   "name": "Effect_Front_ArmR05",
+   "unit": 46,
+   "visible": false,
+   "group_key": "Effect_Front"
+  },
+  {
+   "name": "Effect_Front_ArmR04",
+   "unit": 47,
+   "visible": false,
+   "group_key": "Effect_Front"
+  },
+  {
+   "name": "Effect_Front_ArmR02",
+   "unit": 48,
+   "visible": false,
+   "group_key": "Effect_Front"
+  },
+  {
+   "name": "Effect_Front_ArmL05",
+   "unit": 49,
+   "visible": false,
+   "group_key": "Effect_Front"
+  },
+  {
+   "name": "Effect_Front_ArmL04",
+   "unit": 50,
+   "visible": false,
+   "group_key": "Effect_Front"
+  },
+  {
+   "name": "Effect_Front_ArmL01",
+   "unit": 51,
+   "visible": true,
+   "group_key": "Effect_Front"
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+{
+  "psd": "Anan.psd",
+  "emotions": {
+    "default":    {"on": ["Eyes_Neutral_Open", "Mouth_Normal_Closed", "ArmL01", "ArmR01", "Option_ArmR01_01_Front", "Option_ArmR01_01_Back", "Option_ArmR01_02_Front", "Option_ArmR01_02_Back"]},
+    "smile":      {"on": ["Eyes_Smile_Closed", "Mouth_Smile_Open", "ArmL01", "ArmR01", "Option_ArmR01_01_Front", "Option_ArmR01_01_Back", "Option_ArmR01_02_Front", "Option_ArmR01_02_Back"]},
+    "angry":      {"on": ["Eyes_Angry_Open01", "Mouth_Angry_Closed02", "ArmL01", "ArmR01", "Option_ArmR01_01_Front", "Option_ArmR01_01_Back", "Option_ArmR01_02_Front", "Option_ArmR01_02_Back"]},
+    "cry":        {"on": ["Eyes_Cry_Open01", "Mouth_Cry_Closed", "ArmL01", "ArmR01", "Option_ArmR01_01_Front", "Option_ArmR01_01_Back", "Option_ArmR01_02_Front", "Option_ArmR01_02_Back"]},
+    "afraid":     {"on": ["Eyes_Fearful_Open", "Mouth_Fearful_Open", "ArmL01", "ArmR01", "Option_ArmR01_01_Front", "Option_ArmR01_01_Back", "Option_ArmR01_02_Front", "Option_ArmR01_02_Back"]},
+    "surprise":   {"on": ["Eyes_Surprised_Open", "Mouth_Surprised_Open", "ArmL01", "ArmR01", "Option_ArmR01_01_Front", "Option_ArmR01_01_Back", "Option_ArmR01_02_Front", "Option_ArmR01_02_Back"]},
+    "confused":   {"on": ["Eyes_Downcast_Open", "Mouth_Pensive_Open", "ArmL01", "ArmR01", "Option_ArmR01_01_Front", "Option_ArmR01_01_Back", "Option_ArmR01_02_Front", "Option_ArmR01_02_Back"]},
+    "flushed":    {"on": ["Eyes_Flushed_Open", "Mouth_Flushed_Closed", "Cheeks_Flushed", "ArmL01", "ArmR01", "Option_ArmR01_01_Front", "Option_ArmR01_01_Back", "Option_ArmR01_02_Front", "Option_ArmR01_02_Back"]},
+    "embarrass":  {"on": ["Eyes_Uncomfortable_Open01", "Mouth_Flushed_Closed", "Cheeks_Flushed", "ArmL01", "ArmR01", "Option_ArmR01_01_Front", "Option_ArmR01_01_Back", "Option_ArmR01_02_Front", "Option_ArmR01_02_Back"]},
+    "wronged":    {"on": ["Eyes_Cry_Open02", "Mouth_Cry_Closed", "ArmL01", "ArmR01", "Option_ArmR01_01_Front", "Option_ArmR01_01_Back", "Option_ArmR01_02_Front", "Option_ArmR01_02_Back"]},
+    "paint":      {"on": ["Eyes_Smile_Closed", "Mouth_Smile_Open", "ArmL01", "ArmR01", "Option_ArmR01_01_Front", "Option_ArmR01_01_Back", "Option_ArmR01_02_Front", "Option_ArmR01_02_Back"]}
+  }
+}

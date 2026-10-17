@@ -1,0 +1,96 @@
+{
+  "psd": "Noah.psd",
+  "emotions": {
+    "default": {
+      "on": [
+        "Eyes_Normal_Open01",
+        "Mouth_Normal_Closed",
+        "ArmR01",
+        "ArmL01"
+      ]
+    },
+    "smile": {
+      "on": [
+        "Eyes_Smile_Open",
+        "Mouth_Smile_Open01",
+        "ArmR01",
+        "ArmL01"
+      ]
+    },
+    "angry": {
+      "on": [
+        "Eyes_Angry_Open",
+        "Mouth_Angry_Closed",
+        "ArmR01",
+        "ArmL01"
+      ]
+    },
+    "cry": {
+      "on": [
+        "Eyes_Cry_Open",
+        "Mouth_Cry_Closed",
+        "ArmR01",
+        "ArmL01"
+      ]
+    },
+    "afraid": {
+      "on": [
+        "Eyes_Fearful_Open",
+        "Mouth_Surprised_Open01",
+        "ArmR01",
+        "ArmL01"
+      ]
+    },
+    "surprise": {
+      "on": [
+        "Eyes_Surprised_Open01",
+        "Mouth_Surprised_Open01",
+        "ArmR01",
+        "ArmL01"
+      ]
+    },
+    "confused": {
+      "on": [
+        "Eyes_Pensive_Open",
+        "Mouth_Confused_Open",
+        "ArmR01",
+        "ArmL01"
+      ]
+    },
+    "flushed": {
+      "on": [
+        "Eyes_Uncomfortable_Open",
+        "Mouth_Flushed_Open",
+        "Cheeks_Flushed",
+        "ArmR01",
+        "ArmL01"
+      ]
+    },
+    "embarrass": {
+      "on": [
+        "Eyes_Pensive_Open_1",
+        "Mouth_Flushed_Open",
+        "Cheeks_Flushed",
+        "ArmR01",
+        "ArmL01"
+      ]
+    },
+    "wronged": {
+      "on": [
+        "Eyes_Cry_Open",
+        "Mouth_Pensive_Open",
+        "ArmR01",
+        "ArmL01"
+      ]
+    },
+    "paint": {
+      "on": [
+        "Eyes_Smile_Open",
+        "Mouth_Smile_Open02",
+        "ArmR04",
+        "Effect_Front_ArmR04",
+        "ArmL01"
+      ]
+    }
+  }
+}

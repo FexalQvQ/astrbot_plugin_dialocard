@@ -1,0 +1,77 @@
+[
+ {
+  "name": "背景",
+  "hex": "#FFFFFF",
+  "purity": 1.0
+ },
+ {
+  "name": "图层2",
+  "hex": "#EA4D50",
+  "purity": 0.112
+ },
+ {
+  "name": "图层3",
+  "hex": "#68DDE5",
+  "purity": 0.264
+ },
+ {
+  "name": "图层4",
+  "hex": "#9F90F8",
+  "purity": 0.353
+ },
+ {
+  "name": "图层5",
+  "hex": "#EC4B3C",
+  "purity": 0.231
+ },
+ {
+  "name": "图层6",
+  "hex": "#FA7350",
+  "purity": 0.15
+ },
+ {
+  "name": "图层7",
+  "hex": "#878F92",
+  "purity": 0.323
+ },
+ {
+  "name": "图层8",
+  "hex": "#A6C71F",
+  "purity": 0.058
+ },
+ {
+  "name": "图层9",
+  "hex": "#E3BAB2",
+  "purity": 0.57
+ },
+ {
+  "name": "图层10",
+  "hex": "#EACF89",
+  "purity": 0.279
+ },
+ {
+  "name": "图层11",
+  "hex": "#8AB0F7",
+  "purity": 0.162
+ },
+ {
+  "name": "图层12",
+  "hex": "#FBB15A",
+  "purity": 0.146
+ },
+ {
+  "name": "图层13",
+  "hex": "#B87DEB",
+  "purity": 0.427
+ },
+ {
+  "name": "图层14",
+  "hex": "#FB92AE",
+  "purity": 0.281
+ },
+ {
+  "name": "图层15",
+  "hex": "#BFD2E6",
+  "purity": 1.0
+ }
+]

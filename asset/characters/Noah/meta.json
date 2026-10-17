@@ -1,0 +1,24 @@
+{
+  "character": "Noah",
+  "x": 0,
+  "y": 268,
+  "w": 954,
+  "h": 932,
+  "canvas": [
+    1920,
+    1200
+  ],
+  "emotions": [
+    "default",
+    "wronged",
+    "surprise",
+    "smile",
+    "paint",
+    "flushed",
+    "embarrass",
+    "cry",
+    "confused",
+    "angry",
+    "afraid"
+  ]
+}
