@@ -3,7 +3,7 @@ display_name: 词卡
 desc: |
   基于魔法少女的魔女裁判审判过程UI二改。用于LLM回复时生成粉色高亮的文字卡片。
 author: Fexal
-version: 2.0.0
+version: 2.0.1
 repo: https://github.com/FexalQvQ/astrbot_plugin_dialocard
 astrbot_version: ">=4.16,<5"
 tags:
