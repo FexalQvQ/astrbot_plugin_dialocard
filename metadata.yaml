@@ -1,20 +1,13 @@
 name: astrbot_plugin_dialocard
 display_name: 词卡
 desc: |
-  DialoCard 词卡 —— 将 LLM 回复渲染为精美词卡图片。
+  DialoCard 审判词卡 —— 将 LLM 回复渲染为精美词卡图片。角色立绘来自《魔法少女的魔女裁判》二次创作。
 
-  ## 特性
-  - **多角色差分立绘**：角色来自 PSD 差分图层（眼神/嘴型/脸颊/手臂/特效），atlas 图集运行时实时合成，切换角色零成本
-  - **12 种情绪差分**：smile / angry / cry / afraid / surprise / confused / flushed / embarrass / wronged / paint / shy + default，由 LLM 按语境自选
-  - **三版式随机构图**：左文 / 右文 / 无立绘，背景与文字同角度倾斜
-  - **WebUI 控制台**：仪表盘 → 插件 → 词卡 → Pages，可视化编辑情绪差分图层组合、全局构图，试渲染走真实发卡管线
-  - **情绪组合内置兜底**：emotions.json 被误删/重置时渲染自动回退代码内置组合，永不走样
-  - **Keyword 高亮**：LLM 自动选择关键词粉色高亮，字号放大 1.2 倍
-  - **资产自动下载**：首次启动自动下载全量角色包与完整字体（GitHub Releases），内置 Noah 开箱即用
-  - **优雅降级**：atlas 图集 → 预烘焙角色层 → 旧版整卡图 → 纯文字，逐级兜底
+  特性：多角色差分立绘，PSD 差分图层（眼神、嘴型、脸颊、手臂、特效）经 atlas 图集运行时实时合成，切换角色零成本；10 种情绪差分（smile、angry、cry、afraid、surprise、confused、flushed、embarrass、wronged、paint，另含 default），由 LLM 按语境自选；三版式随机构图（左文、右文、无立绘），背景与文字同角度倾斜；WebUI 控制台可视化编辑情绪差分图层组合与全局构图，试渲染走真实发卡管线；情绪组合内置兜底，emotions.json 被误删或重置时渲染自动回退代码内置组合，永不走样；关键词粉色高亮，字号放大 1.2 倍；首次启动自动下载全量角色包与完整字体（GitHub Releases），内置诺亚开箱即用；多级优雅降级（atlas 图集、预烘焙角色层、旧版整卡图、纯文字）。
 
-  ## 使用
-  安装后即可用（内置 Noah）。更多角色由 asset_url 首次启动自动下载，之后在 WebUI 或配置中切换角色。
+  安装后即可用（内置诺亚）。更多角色由 asset_url 首次启动自动下载，之后在 WebUI 或配置中切换角色。
+
+  本插件为《魔法少女的魔女裁判》同人二创作品，素材版权归原作者所有，与官方无关。
 author: Fexal
 version: 2.0.0
 repo: https://github.com/FexalQvQ/astrbot_plugin_dialocard
